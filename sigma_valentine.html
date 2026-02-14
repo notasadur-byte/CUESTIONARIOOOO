@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL SIGMA | PROTOCOLO V-2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --neon-red: #ff1100;
+            --gold: #ffcc00;
+            --dark-void: #050505;
+            --panel: #0f0f0f;
+            --text: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--dark-void);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #terminal {
+            background: var(--panel);
+            width: 90%;
+            max-width: 700px;
+            border: 1px solid var(--neon-red);
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(255, 17, 0, 0.2);
+            position: relative;
+            z-index: 3;
+        }
+
+        .screen { display: none; }
+        .active { display: block; animation: crt-flicker 0.1s infinite alternate; }
+
+        h2 { color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 10px; font-size: 1.2rem; }
+        .desc { color: #888; font-size: 0.85rem; margin-bottom: 20px; }
+
+        input {
+            background: #000;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        button {
+            background: var(--neon-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+        button:hover { background: #b30e00; letter-spacing: 5px; }
+
+        #reaction-box {
+            width: 100px; height: 100px;
+            background: var(--gold);
+            margin: 20px auto;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Barra de progreso */
+        .bar-bg { background: #222; height: 20px; margin: 15px 0; border: 1px solid #444; }
+        .bar-fill { background: var(--neon-red); height: 100%; width: 0%; transition: 0.1s; }
+
+        .log { font-size: 0.7rem; color: #444; margin-top: 20px; text-align: left; }
+
+        @keyframes crt-flicker {
+            0% { opacity: 0.99; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="terminal">
+    <div id="s1" class="screen active">
+        <h2>[AUTENTICACIÓN REQUERIDA]</h2>
+        <p class="desc">Iniciando protocolo San Valentín 2026. Solo para la mejor novia.</p>
+        <input type="password" id="i1" placeholder="CONTRASEÑA DE ACCESO (Pista: La novia mas guapa)">
+        <button onclick="check1()">VALIDAR ADN</button>
+    </div>
+
+    <div id="s2" class="screen">
+        <h2>[NIVEL 02: TRADUCIR]</h2>
+        <p class="desc">Traduce este texto: <strong>Adur fell in love with Carla just by seeing her</strong></p>
+        <input type="text" id="i2" placeholder="TRADUCCIÓN">
+        <button onclick="check2()">DECODIFICAR</button>
+    </div>
+
+    <div id="s3" class="screen">
+        <h2>[NIVEL 03: CALMA]</h2>
+        <p class="desc">Corre dale lo mas rapido que puedas... carla se esta enfadando.</p>
+        <div class="bar-bg"><div id="p3" class="bar-fill"></div></div>
+        <button onmousedown="press3()">INYECTAR CALMANTE (CLIC REPETIDO)</button>
+    </div>
+
+    <div id="s4" class="screen">
+    <h2>[NIVEL 04: REFLEJOS]</h2>
+    <p class="desc">Haz clic en la imagen en menos de 1 segundo. Si parpadeas, pierdes.</p>
+    
+    <div id="target-container" style="position: relative; width: 100%; height: 200px; background: #000; border: 1px solid #333; overflow: hidden; margin-bottom: 10px;">
+        <img id="sigma-target" 
+             src="c:\Users\notas\Downloads\Carlaaa.jpg" 
+             onclick="hit4()" 
+             style="display: none; position: absolute; width: 70px; height: 70px; cursor: crosshair; border: 2px solid var(--gold); object-fit: cover;">
+    </div>
+    
+    <button id="start4" onclick="startReaction()">INICIAR ESCÁNER</button>
+</div>
+
+    <div id="s5" class="screen">
+        <h2>[NIVEL 05: ADIVINANZA]</h2>
+        <p class="desc">¿Qué tiene 4 ruedas, un motor 49 y un rugido de un leon hambriento?</p>
+        <input type="text" id="i5" placeholder="RESPUESTA">
+        <button onclick="check5()">VERIFICAR</button>
+    </div>
+
+    <div id="s6" class="screen">
+        <h2>[NIVEL 06: TENCNOLOGÍA]</h2>
+        <p class="desc">Cual es el dispositivo mas usado por carla despues del movil?</p>
+        <input type="text" id="i6" placeholder="¿QUÉ ES?">
+        <button onclick="check6()">ESTABLECER RUTA</button>
+    </div>
+
+    <div id="s7" class="screen">
+        <h2>[NIVEL 07: ÚLTIMA BARRERA]</h2>
+        <p class="desc">Escribe la frase que mas nos decimos al referirnos al amor.</p>
+        <input type="text" id="i7" placeholder="LA FRASE">
+        <button onclick="check7()">DESBLOQUEAR NÚCLEO</button>
+    </div>
+
+    <div id="s8" class="screen">
+        <h2 style="color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red);">[SISTEMA CONQUISTADO]</h2>
+        <p>Has completado la Gincana de San Valentín.</p>
+        <div id="final-card" style="border: 2px solid var(--gold); padding: 20px; color: var(--gold); font-weight: bold;">
+            CARGANDO RECOMPENSA...
+        </div>
+        <br>
+        <button onclick="location.reload()">REINICIAR PROTOCOLO</button>
+    </div>
+
+    <div class="log" id="log-console">> ESTADO: SISTEMA LISTO...</div>
+</div>
+
+<script>
+    const log = document.getElementById('log-console');
+    function updateLog(txt) { log.innerText = "> " + txt; }
+
+    function step(current, next) {
+        document.getElementById('s' + current).classList.remove('active');
+        document.getElementById('s' + next).classList.add('active');
+        updateLog("AVANZANDO A FASE " + next + "...");
+    }
+
+    // Lógica de Niveles
+    function check1() {
+        if(document.getElementById('i1').value.toUpperCase() === "CARLA") step(1, 2);
+        else updateLog("ERROR: ACCESO DENEGADO");
+    }
+
+    function check2() {
+        if(document.getElementById('i2').value.toUpperCase() === "ADUR SE ENAMORO DE CARLA SOLO CON VERLA") step(2, 3);
+        else updateLog("ERROR: TRADUCCIÓN ERRÓNEA");
+    }
+
+    let p3_val = 0;
+    function press3() {
+        p3_val += 4;
+        document.getElementById('p3').style.width = p3_val + "%";
+        if(p3_val >= 100) step(3, 4);
+    }
+
+    function startReaction() {
+        document.getElementById('start4').style.display = 'none';
+        setTimeout(() => {
+            document.getElementById('reaction-box').style.display = 'block';
+            document.getElementById('reaction-box').style.marginTop = Math.random() * 50 + "px";
+        }, Math.random() * 3000 + 1000);
+    }
+
+    let rTimer; // Variable para el cronómetro
+
+function startReaction() {
+    document.getElementById('start4').style.display = 'none'; // Escondemos el botón
+    updateLog("ESPERANDO OBJETIVO...");
+
+    setTimeout(() => {
+        const t = document.getElementById('sigma-target');
+        const cont = document.getElementById('target-container');
+        
+        // Posición aleatoria
+        t.style.left = Math.random() * (cont.clientWidth - 70) + "px";
+        t.style.top = Math.random() * (cont.clientHeight - 70) + "px";
+        t.style.display = 'block';
+        
+        // Cronómetro de desaparición (1000ms = 1 segundo)
+        rTimer = setTimeout(() => {
+            if(t.style.display === 'block') {
+                t.style.display = 'none';
+                document.getElementById('start4').style.display = 'block'; // Reaparece el botón si fallas
+                updateLog("FALLO: DEMASIADO LENTO.");
+            }
+        }, 1000); 
+    }, 1500); // Aparece tras 1.5 segundos de espera
+}
+
+function hit4() {
+    clearTimeout(rTimer); // Detenemos el cronómetro porque le has dado
+    document.getElementById('sigma-target').style.display = 'none';
+    updateLog("OBJETIVO ELIMINADO.");
+    step(4, 5); // Pasamos al siguiente nivel
+}
+
+    function check5() {
+        let v = document.getElementById('i5').value.toUpperCase();
+        if(v.includes("EL TAKA TAKA DE CARLA") || v.includes("TAKA")) step(5, 6);
+        else updateLog("ERROR: NO ENTIENDES LA VIBRA");
+    }
+
+    function check6() {
+        if(document.getElementById('i6').value.toUpperCase() === "VAPER") step(6, 7);
+        else updateLog("ERROR: PIENSA MEJOR");
+    }
+
+    function check7() {
+        if(document.getElementById('i7').value.length > 30) {
+            step(7, 8);
+            finish();
+        }
+    }
+
+    function finish() {
+        updateLog("COMPLETADO AL 100%.");
+        document.getElementById('final-card').innerText = "CENA + SORPRESA. PREPÁRATE.";
+        confetti({
+            particleCount: 200,
+            spread: 90,
+            origin: { y: 0.6 },
+            colors: ['#ff1100', '#ffcc00', '#ffffff']
+        });
+    }
+</script>
+</body>
+</html>
